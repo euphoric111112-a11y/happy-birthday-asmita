@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0c0a0d" />
+  <title>Happy Birthday, Asmita</title>
+
+  <!-- Google Fonts: Cormorant Garamond (refined serif) & Inter (clean UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ==========================================================================
+       Base Variables & Theme Tokens
+       ========================================================================== */
+    :root {
+      --bg-obsidian: #0c0a0d;
+      --text-primary: #f5efe6;
+      --text-secondary: #a89f94;
+      --text-muted: #6e665e;
+      --accent-amber: #e8a85c;
+      --light-intensity: 0; /* Dynamically updated from 0 to 1 based on lit candles */
+      --blow-strength: 0;   /* Dynamically updated from 0 to 1 based on mic input */
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 100dvh;
+      background-color: var(--bg-obsidian);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow: hidden;
+      overscroll-behavior: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .font-serif-display {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    /* ==========================================================================
+       Atmospheric Dynamic Candlelight Background
+       ========================================================================== */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity: calc(0.12 + var(--light-intensity) * 0.88);
+    }
+
+    .ambient-glow::before {
+      content: '';
+      position: absolute;
+      top: 44%;
+      left: 50%;
+      width: 140vw;
+      height: 140vw;
+      max-width: 920px;
+      max-height: 920px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(
+        circle,
+        rgba(255, 174, 76, calc(0.24 * var(--light-intensity))) 0%,
+        rgba(224, 114, 34, calc(0.13 * var(--light-intensity))) 28%,
+        rgba(120, 48, 18, calc(0.05 * var(--light-intensity))) 56%,
+        rgba(12, 10, 13, 0) 76%
+      );
+      animation: ambientPulse 4.6s ease-in-out infinite alternate;
+      transition: background 0.8s ease;
+    }
+
+    .ambient-glow::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at 50% 50%,
+        transparent 38%,
+        rgba(8, 6, 9, 0.72) 100%
+      );
+    }
+
+    @keyframes ambientPulse {
+      0% {
+        transform: translate(-50%, -50%) scale(0.98);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.035);
+      }
+    }
+
+    /* Subtle film grain texture for depth */
+    .grain-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.035;
+      background-image: radial-gradient(rgba(255, 240, 220, 0.45) 0.5px, transparent 0.5px);
+      background-size: 4px 4px;
+    }
+
+    /* ==========================================================================
+       Stage Transitions (Opening -> Cake -> Reveal)
+       ========================================================================== */
+    .stage {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      transition:
+        opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0.85s;
+    }
+
+    .stage.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(14px) scale(0.985);
+    }
+
+    .stage.is-active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    /* ==========================================================================
+       Tactile Buttons
+       ========================================================================== */
+    .btn-warm {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem 2.1rem;
+      border-radius: 9999px;
+      font-size: 0.9rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: #f7efe4;
+      background: linear-gradient(180deg, rgba(232, 168, 92, 0.16) 0%, rgba(196, 114, 46, 0.1) 100%);
+      border: 1px solid rgba(232, 168, 92, 0.36);
+      box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.45),
+        0 0 24px rgba(232, 168, 92, 0.12),
+        inset 0 1px 0 rgba(255, 240, 215, 0.14);
+      cursor: pointer;
+      transition:
+        transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+        background 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+    }
+
+    .btn-warm:hover {
+      background: linear-gradient(180deg, rgba(232, 168, 92, 0.24) 0%, rgba(196, 114, 46, 0.16) 100%);
+      border-color: rgba(244, 192, 122, 0.56);
+      box-shadow:
+        0 10px 32px rgba(0, 0, 0, 0.5),
+        0 0 32px rgba(232, 168, 92, 0.22),
+        inset 0 1px 0 rgba(255, 240, 215, 0.22);
+    }
+
+    .btn-warm:active {
+      transform: scale(0.96);
+    }
+
+    .btn-subtle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.72rem 1.65rem;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 400;
+      letter-spacing: 0.07em;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(245, 239, 230, 0.14);
+      cursor: pointer;
+      transition:
+        color 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease,
+        transform 0.2s ease;
+    }
+
+    .btn-subtle:hover {
+      color: var(--text-primary);
+      border-color: rgba(232, 168, 92, 0.38);
+      background: rgba(232, 168, 92, 0.08);
+    }
+
+    .btn-subtle:active {
+      transform: scale(0.96);
+    }
+
+    /* Subtle introductory flame motif on opening screen */
+    .intro-ember {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #f5b969;
+      box-shadow:
+        0 0 12px 3px rgba(245, 185, 105, 0.55),
+        0 0 28px 8px rgba(232, 132, 48, 0.25);
+      animation: emberBreathe 3.2s ease-in-out infinite;
+    }
+
+    @keyframes emberBreathe {
+      0%, 100% {
+        opacity: 0.6;
+        transform: scale(0.92);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.15);
+      }
+    }
+
+    /* ==========================================================================
+       Cake Scene & Interactive Candles
+       ========================================================================== */
+    .cake-scene {
+      position: relative;
+      width: min(86vw, 340px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      touch-action: none; /* Allows smooth swiping across candles on mobile */
+    }
+
+    /* Warm light reflection cast onto the top of the cake */
+    .cake-light-wash {
+      position: absolute;
+      top: 12%;
+      left: 50%;
+      width: 240px;
+      height: 130px;
+      transform: translateX(-50%);
+      background: radial-gradient(
+        ellipse at center,
+        rgba(255, 186, 92, calc(0.28 * var(--light-intensity))) 0%,
+        rgba(255, 130, 40, calc(0.1 * var(--light-intensity))) 48%,
+        transparent 75%
+      );
+      pointer-events: none;
+      z-index: 3;
+      transition: opacity 0.6s ease;
+    }
+
+    /* Candles container positioned cleanly over the top tier of the SVG cake */
+    .candles-row {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: -24px;
+      padding: 36px 22px 0;
+    }
+
+    .candle-unit {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      padding: 10px 7px 0;
+      margin: -10px -7px 0;
+      touch-action: none;
+    }
+
+    /* Slight organic height variation across the 5 candles */
+    .candle-unit[data-index="0"] .candle-stick { height: 52px; }
+    .candle-unit[data-index="1"] .candle-stick { height: 60px; }
+    .candle-unit[data-index="2"] .candle-stick { height: 66px; }
+    .candle-unit[data-index="3"] .candle-stick { height: 59px; }
+    .candle-unit[data-index="4"] .candle-stick { height: 50px; }
+
+    /* Slender taper candle body */
+    .candle-stick {
+      position: relative;
+      width: 9px;
+      border-radius: 3px 3px 2px 2px;
+      background: linear-gradient(
+        90deg,
+        #c8b8a4 0%,
+        #f4eadc 35%,
+        #ebe0cf 65%,
+        #a89784 100%
+      );
+      box-shadow:
+        inset 0 2px 3px rgba(255, 252, 245, 0.5),
+        0 4px 10px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    /* Subtle warm candlelight top tint on wax while lit */
+    .candle-stick::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 18px;
+      background: linear-gradient(180deg, rgba(255, 198, 112, 0.55), transparent);
+      opacity: 1;
+      transition: opacity 0.45s ease;
+    }
+
+    .candle-unit.is-out .candle-stick::after {
+      opacity: 0;
+    }
+
+    /* Tiny dark wick */
+    .candle-wick {
+      width: 2px;
+      height: 8px;
+      background: linear-gradient(180deg, #3b2d26 0%, #171210 100%);
+      border-radius: 2px 2px 0 0;
+      margin-bottom: -1px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Brief glowing ember tip right after extinguishing */
+    .candle-wick::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      background: #ff6b2b;
+      box-shadow: 0 0 6px 2px rgba(255, 107, 43, 0.85);
+      opacity: 0;
+    }
+
+    .candle-unit.just-extinguished .candle-wick::after {
+      animation: emberFade 1.4s ease-out forwards;
+    }
+
+    @keyframes emberFade {
+      0% { opacity: 1; }
+      40% { opacity: 0.75; }
+      100% { opacity: 0; }
+    }
+
+    /* ==========================================================================
+       Realistic Layered Flame
+       ========================================================================== */
+    .flame-anchor {
+      position: relative;
+      width: 24px;
+      height: 36px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      margin-bottom: -2px;
+      pointer-events: none;
+    }
+
+    .flame-wrapper {
+      position: relative;
+      width: 14px;
+      height: 28px;
+      transform-origin: 50% 100%;
+      will-change: transform, opacity;
+      transition: opacity 0.22s ease;
+    }
+
+    .candle-unit.is-out .flame-wrapper {
+      opacity: 0;
+      transform: scaleY(0.15) scaleX(0.4) !important;
+    }
+
+    /* Soft outer halo around each flame */
+    .flame-halo {
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      width: 44px;
+      height: 44px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(255, 178, 72, 0.45) 0%,
+        rgba(255, 118, 28, 0.16) 45%,
+        transparent 74%
+      );
+      animation: haloFlicker var(--flicker-dur, 2.2s) ease-in-out infinite alternate;
+      animation-delay: var(--flicker-delay, 0s);
+    }
+
+    /* Warm golden-orange outer flame body */
+    .flame-outer {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 13px;
+      height: 26px;
+      transform: translateX(-50%);
+      background: radial-gradient(
+        ellipse at 50% 72%,
+        #ffe08a 0%,
+        #ff9d2e 45%,
+        #e85d12 85%,
+        rgba(232, 93, 18, 0) 100%
+      );
+      border-radius: 50% 50% 45% 45% / 68% 68% 32% 32%;
+      box-shadow:
+        0 0 10px rgba(255, 165, 52, 0.65),
+        0 0 22px rgba(255, 110, 26, 0.35);
+      transform-origin: 50% 100%;
+      animation: flameDance var(--flicker-dur, 1.9s) ease-in-out infinite alternate;
+      animation-delay: var(--flicker-delay, 0s);
+    }
+
+    /* Bright incandescent white-gold inner core */
+    .flame-core {
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      width: 6px;
+      height: 13px;
+      transform: translateX(-50%);
+      background: radial-gradient(
+        ellipse at 50% 78%,
+        #ffffff 0%,
+        #fff7d6 55%,
+        rgba(255, 224, 130, 0.15) 100%
+      );
+      border-radius: 50% 50% 45% 45% / 70% 70% 30% 30%;
+      filter: blur(0.4px);
+    }
+
+    /* Subtle blue base at the wick */
+    .flame-base {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 5px;
+      height: 4px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: rgba(110, 150, 255, 0.45);
+      filter: blur(1px);
+    }
+
+    @keyframes flameDance {
+      0% {
+        transform: translateX(-50%) scaleX(0.96) scaleY(0.98) rotate(-2deg);
+      }
+      33% {
+        transform: translateX(-50%) scaleX(1.03) scaleY(1.04) rotate(1.8deg);
+      }
+      66% {
+        transform: translateX(-50%) scaleX(0.97) scaleY(0.96) rotate(-1.2deg);
+      }
+      100% {
+        transform: translateX(-50%) scaleX(1.02) scaleY(1.05) rotate(2.4deg);
+      }
+    }
+
+    @keyframes haloFlicker {
+      0% {
+        opacity: 0.78;
+        transform: translateX(-50%) scale(0.94);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.08);
+      }
+    }
+
+    /* Ignition animation when lighting candles */
+    .candle-unit.is-lighting .flame-wrapper {
+      animation: igniteFlame 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes igniteFlame {
+      0% {
+        opacity: 0;
+        transform: scale(0.2, 0.1);
+      }
+      65% {
+        opacity: 1;
+        transform: scale(1.08, 1.12);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1, 1);
+      }
+    }
+
+    /* ==========================================================================
+       Delicate Rising Smoke Wisps
+       ========================================================================== */
+    .smoke-origin {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    .smoke-wisp {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(218, 212, 206, 0.38) 0%,
+        rgba(176, 170, 166, 0.14) 55%,
+        transparent 100%
+      );
+      filter: blur(3px);
+      transform: translate(-50%, 0) scale(0.5);
+      animation: smokeCurl var(--smoke-dur, 2.4s) cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    }
+
+    @keyframes smokeCurl {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, 0) scale(0.45);
+      }
+      18% {
+        opacity: 0.68;
+        transform: translate(calc(-50% + var(--drift-mid, 6px)), -22px) scale(1.1);
+      }
+      55% {
+        opacity: 0.34;
+        transform: translate(calc(-50% + var(--drift-end, -10px)), -58px) scale(2.1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--drift-final, 8px)), -98px) scale(3.1);
+      }
+    }
+
+    /* ==========================================================================
+       Minimalist Cake SVG Styling
+       ========================================================================== */
+    .cake-svg {
+      position: relative;
+      z-index: 4;
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 24px 36px rgba(0, 0, 0, 0.72));
+    }
+
+    .cake-top-sheen {
+      transition: opacity 0.7s ease;
+      opacity: calc(0.15 + var(--light-intensity) * 0.85);
+    }
+
+    /* ==========================================================================
+       Subtle Mic Breath Indicator & Helper Text
+       ========================================================================== */
+    .helper-text {
+      margin-top: 1.85rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      text-align: center;
+      transition: opacity 0.6s ease, color 0.4s ease;
+    }
+
+    .breath-bar-wrap {
+      margin-top: 0.9rem;
+      width: 72px;
+      height: 2px;
+      border-radius: 9999px;
+      background: rgba(245, 239, 230, 0.07);
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .breath-bar-wrap.is-visible {
+      opacity: 1;
+    }
+
+    .breath-bar-fill {
+      width: 100%;
+      height: 100%;
+      border-radius: 9999px;
+      background: linear-gradient(90deg, rgba(232, 168, 92, 0.35), rgba(255, 206, 134, 0.9));
+      transform-origin: left center;
+      transform: scaleX(0);
+      will-change: transform;
+    }
+
+    /* ==========================================================================
+       Confetti & Golden Sparkle Canvas Overlay
+       ========================================================================== */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* ==========================================================================
+       Reveal Typography Animations
+       ========================================================================== */
+    .reveal-card {
+      max-width: 440px;
+      text-align: center;
+    }
+
+    .reveal-divider {
+      width: 36px;
+      height: 1px;
+      margin: 0 auto 1.75rem;
+      background: linear-gradient(90deg, transparent, rgba(232, 168, 92, 0.55), transparent);
+    }
+
+    .polaroid {
+  position: relative;
+  width: 210px;
+  margin: 24px auto;
+  padding: 12px 12px 34px;
+  background: #f8f5ef;
+  border-radius: 3px;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.55);
+  transform: rotate(-3deg);
+}
+
+.polaroid::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(2deg);
+  width: 68px;
+  height: 22px;
+  background: rgba(215, 198, 165, 0.55);
+}
+
+.polaroid img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.polaroid-caption {
+  display: block;
+  margin-top: 10px;
+  color: #222;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  text-align: center;
+}
+  </style>
+</head>
+<body>
+  <!-- Atmospheric Dynamic Candlelight Glow -->
+  <div class="ambient-glow" aria-hidden="true"></div>
+  <div class="grain-overlay" aria-hidden="true"></div>
+
+  <!-- Confetti & Golden Sparkle Overlay -->
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+  <!-- ========================================================================
+       STAGE 1: OPENING SCREEN
+       ======================================================================== -->
+  <main id="stage-opening" class="stage is-active" aria-label="Birthday greeting intro">
+    <div class="flex flex-col items-center text-center max-w-sm px-2">
+      <div class="intro-ember mb-9" aria-hidden="true"></div>
+
+      <h1 class="font-serif-display text-3xl sm:text-4xl font-normal tracking-wide text-[#f5efe6] leading-snug mb-10">
+        Thought I'd send a cake your way.
+      </h1>
+
+      <button id="btn-start" type="button" class="btn-warm">
+        Light the cake
+      </button>
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       STAGE 2: INTERACTIVE CAKE SCREEN
+       ======================================================================== -->
+  <section id="stage-cake" class="stage is-hidden" aria-label="Interactive birthday cake">
+    <div id="cake-scene" class="cake-scene">
+      <!-- Warm candlelight wash falling onto the frosting -->
+      <div class="cake-light-wash" aria-hidden="true"></div>
+
+      <!-- 5 Slender Interactive Candles -->
+      <div id="candles-row" class="candles-row" role="group" aria-label="Birthday candles">
+        <!-- Candle 1 -->
+        <div class="candle-unit" data-index="0" role="button" tabindex="0" aria-label="Candle 1, lit">
+          <div class="flame-anchor">
+            <div class="flame-wrapper" style="--flicker-dur: 1.85s; --flicker-delay: -0.2s;">
+              <div class="flame-halo"></div>
+              <div class="flame-outer"></div>
+              <div class="flame-core"></div>
+              <div class="flame-base"></div>
+            </div>
+            <div class="smoke-origin"></div>
+          </div>
+          <div class="candle-wick"></div>
+          <div class="candle-stick"></div>
+        </div>
+
+        <!-- Candle 2 -->
+        <div class="candle-unit" data-index="1" role="button" tabindex="0" aria-label="Candle 2, lit">
+          <div class="flame-anchor">
+            <div class="flame-wrapper" style="--flicker-dur: 2.15s; --flicker-delay: -0.9s;">
+              <div class="flame-halo"></div>
+              <div class="flame-outer"></div>
+              <div class="flame-core"></div>
+              <div class="flame-base"></div>
+            </div>
+            <div class="smoke-origin"></div>
+          </div>
+          <div class="candle-wick"></div>
+          <div class="candle-stick"></div>
+        </div>
+
+        <!-- Candle 3 (Center, tallest) -->
+        <div class="candle-unit" data-index="2" role="button" tabindex="0" aria-label="Candle 3, lit">
+          <div class="flame-anchor">
+            <div class="flame-wrapper" style="--flicker-dur: 1.7s; --flicker-delay: -0.5s;">
+              <div class="flame-halo"></div>
+              <div class="flame-outer"></div>
+              <div class="flame-core"></div>
+              <div class="flame-base"></div>
+            </div>
+            <div class="smoke-origin"></div>
+          </div>
+          <div class="candle-wick"></div>
+          <div class="candle-stick"></div>
+        </div>
+
+        <!-- Candle 4 -->
+        <div class="candle-unit" data-index="3" role="button" tabindex="0" aria-label="Candle 4, lit">
+          <div class="flame-anchor">
+            <div class="flame-wrapper" style="--flicker-dur: 2.05s; --flicker-delay: -1.3s;">
+              <div class="flame-halo"></div>
+              <div class="flame-outer"></div>
+              <div class="flame-core"></div>
+              <div class="flame-base"></div>
+            </div>
+            <div class="smoke-origin"></div>
+          </div>
+          <div class="candle-wick"></div>
+          <div class="candle-stick"></div>
+        </div>
+
+        <!-- Candle 5 -->
+        <div class="candle-unit" data-index="4" role="button" tabindex="0" aria-label="Candle 5, lit">
+          <div class="flame-anchor">
+            <div class="flame-wrapper" style="--flicker-dur: 1.92s; --flicker-delay: -0.7s;">
+              <div class="flame-halo"></div>
+              <div class="flame-outer"></div>
+              <div class="flame-core"></div>
+              <div class="flame-base"></div>
+            </div>
+            <div class="smoke-origin"></div>
+          </div>
+          <div class="candle-wick"></div>
+          <div class="candle-stick"></div>
+        </div>
+      </div>
+
+      <!-- Minimalist Multi-Tier Dark Cocoa & Warm Cream Birthday Cake (SVG) -->
+      <svg class="cake-svg" viewBox="0 0 340 245" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <!-- Cocoa / Dark Velvet Gradients -->
+          <linearGradient id="cocoaBottom" x1="56" y1="120" x2="284" y2="210" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#352420" />
+            <stop offset="38%" stop-color="#251815" />
+            <stop offset="82%" stop-color="#1a110f" />
+            <stop offset="100%" stop-color="#140d0b" />
+          </linearGradient>
+
+          <linearGradient id="cocoaTop" x1="92" y1="36" x2="248" y2="120" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#3d2924" />
+            <stop offset="40%" stop-color="#2a1c19" />
+            <stop offset="85%" stop-color="#1e1311" />
+            <stop offset="100%" stop-color="#160e0c" />
+          </linearGradient>
+
+          <!-- Warm Cream Frosting Gradients -->
+          <linearGradient id="creamTop" x1="92" y1="24" x2="248" y2="68" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#f7efe3" />
+            <stop offset="55%" stop-color="#eadbc8" />
+            <stop offset="100%" stop-color="#d2bfa8" />
+          </linearGradient>
+
+          <linearGradient id="creamMid" x1="56" y1="106" x2="284" y2="152" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#efe3d2" />
+            <stop offset="55%" stop-color="#dfd0bc" />
+            <stop offset="100%" stop-color="#c3af96" />
+          </linearGradient>
+
+          <!-- Sleek Matte Ceramic Plate -->
+          <linearGradient id="plateRim" x1="24" y1="205" x2="316" y2="232" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#332c33" />
+            <stop offset="45%" stop-color="#221d23" />
+            <stop offset="100%" stop-color="#151216" />
+          </linearGradient>
+
+          <!-- Candlelight Warm Reflection on Top Surface -->
+          <radialGradient id="topGlow" cx="50%" cy="50%" r="55%">
+            <stop offset="0%" stop-color="#ffcf82" stop-opacity="0.45" />
+            <stop offset="65%" stop-color="#ff9b3d" stop-opacity="0.14" />
+            <stop offset="100%" stop-color="#ff9b3d" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+
+        <!-- Plate Ground Shadow -->
+        <ellipse cx="170" cy="224" rx="146" ry="16" fill="#050406" fill-opacity="0.82" />
+
+        <!-- Sleek Minimalist Plate -->
+        <ellipse cx="170" cy="214" rx="144" ry="18" fill="url(#plateRim)" />
+        <ellipse cx="170" cy="212" rx="140" ry="15" fill="#1b171c" stroke="#3c343d" stroke-opacity="0.45" stroke-width="1" />
+        <ellipse cx="170" cy="212" rx="116" ry="11" fill="#141115" />
+
+        <!-- Bottom Cake Tier (Dark Velvet Cocoa) -->
+        <path d="M56 122 L56 200 C56 209 107 216 170 216 C233 216 284 209 284 200 L284 122 Z" fill="url(#cocoaBottom)" />
+
+        <!-- Subtle Middle Filling Line -->
+        <path d="M56 164 C96 171 244 171 284 164" stroke="#4a332b" stroke-opacity="0.38" stroke-width="1.5" />
+
+        <!-- Bottom Tier Cream Frosting Top + Drips -->
+        <ellipse cx="170" cy="122" rx="114" ry="14" fill="url(#creamMid)" />
+        <path
+          d="M56 122
+             L56 135
+             C56 141 64 141 66 134
+             C68 128 76 129 78 140
+             C80 151 90 152 93 139
+             C96 129 107 130 110 137
+             C113 144 124 143 127 135
+             C130 128 140 130 144 145
+             C147 156 158 156 161 143
+             C164 133 176 132 180 139
+             C184 146 194 145 198 136
+             C202 128 212 130 216 143
+             C219 153 230 152 233 140
+             C236 130 247 130 250 137
+             C253 143 263 143 266 135
+             C269 129 278 131 280 137
+             C282 141 284 139 284 135
+             L284 122
+             C284 129 233 135 170 135
+             C107 135 56 129 56 122 Z"
+          fill="url(#creamMid)"
+        />
+
+        <!-- Soft Cast Shadow Beneath Top Tier -->
+        <ellipse cx="170" cy="121" rx="82" ry="10" fill="#120b09" fill-opacity="0.45" />
+
+        <!-- Top Cake Tier (Dark Velvet Cocoa) -->
+        <path d="M92 40 L92 117 C92 124 127 129 170 129 C213 129 248 124 248 117 L248 40 Z" fill="url(#cocoaTop)" />
+
+        <!-- Top Tier Warm Cream Frosting Top + Drips -->
+        <ellipse cx="170" cy="40" rx="78" ry="11" fill="url(#creamTop)" />
+        <path
+          d="M92 40
+             L92 52
+             C92 57 99 57 101 51
+             C103 45 110 46 112 58
+             C114 68 124 68 126 56
+             C128 47 138 47 141 54
+             C144 61 153 60 156 52
+             C159 45 167 47 170 61
+             C173 71 183 71 186 58
+             C189 48 198 48 201 55
+             C204 61 213 60 216 52
+             C219 46 227 48 230 57
+             C233 65 241 64 243 55
+             C245 49 248 51 248 48
+             L248 40
+             C248 46 213 51 170 51
+             C127 51 92 46 92 40 Z"
+          fill="url(#creamTop)"
+        />
+
+        <!-- Subtle Warm Candlelight Sheen on Top Frosting -->
+        <ellipse class="cake-top-sheen" cx="170" cy="40" rx="72" ry="9" fill="url(#topGlow)" />
+      </svg>
+    </div>
+
+    <!-- Subtle Breath Intensity Bar (visible only when mic is active) -->
+    <div id="breath-bar-wrap" class="breath-bar-wrap" aria-hidden="true">
+      <div id="breath-bar-fill" class="breath-bar-fill"></div>
+    </div>
+
+    <!-- Adaptive Low-Contrast Helper Text -->
+    <p id="helper-text" class="helper-text">
+      Blow into your mic — or tap the candles
+    </p>
+  </section>
+
+  <!-- ========================================================================
+       STAGE 3: FINAL BIRTHDAY REVEAL
+       ======================================================================== -->
+  <section id="stage-reveal" class="stage is-hidden" aria-label="Birthday message">
+    <div class="reveal-card px-4">
+      <div class="reveal-divider" aria-hidden="true"></div>
+
+      <h2 class="font-serif-display text-4xl sm:text-5xl font-normal tracking-wide text-[#f7f1e8] leading-tight mb-5">
+        Happy Birthday, Asmita.
+      </h2>
+
+      <div class="polaroid">
+         <img src="asmita.jpg" alt="Asmita" />
+        <span class="polaroid-caption">Asmita</span>
+      </div>
+      
+
+      <p class="text-sm sm:text-base font-light leading-relaxed text-[#b8afa4] max-w-xs sm:max-w-sm mx-auto mb-11">
+        Hope whatever you just wished for comes true. Have a great one.
+      </p>
+
+      <button id="btn-replay" type="button" class="btn-subtle">
+        Light them again
+      </button>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ======================================================================
+         DOM References & Application State
+         ====================================================================== */
+      const rootEl = document.documentElement;
+      const stageOpening = document.getElementById('stage-opening');
+      const stageCake = document.getElementById('stage-cake');
+      const stageReveal = document.getElementById('stage-reveal');
+
+      const btnStart = document.getElementById('btn-start');
+      const btnReplay = document.getElementById('btn-replay');
+      const cakeScene = document.getElementById('cake-scene');
+      const helperText = document.getElementById('helper-text');
+      const breathBarWrap = document.getElementById('breath-bar-wrap');
+      const breathBarFill = document.getElementById('breath-bar-fill');
+
+      const candleEls = Array.from(document.querySelectorAll('.candle-unit'));
+      const totalCandles = candleEls.length;
+
+      // Per-candle state (slight resistance variation makes blowing feel organic)
+      const candles = candleEls.map((el, idx) => ({
+        el,
+        flameWrapper: el.querySelector('.flame-wrapper'),
+        smokeOrigin: el.querySelector('.smoke-origin'),
+        lit: true,
+        // Energy accumulated from blowing (0 -> threshold extinguishes candle)
+        blowProgress: 0,
+        // Slight organic variation so candles go out naturally in a quick cascade
+        threshold: 0.72 + (idx === 2 ? 0.24 : Math.abs(idx - 2) * 0.08) + Math.random() * 0.14
+      }));
+
+      let currentStage = 'opening'; // 'opening' | 'cake' | 'reveal'
+      let micActive = false;
+      let audioContext = null;
+      let analyser = null;
+      let micStream = null;
+      let timeDataArray = null;
+      let freqDataArray = null;
+      let rafAudioId = null;
+      let smoothedBlow = 0;
+      let isSwiping = false;
+      let revealTimeout = null;
+
+      /* ======================================================================
+         Dynamic Ambient Candlelight Updater
+         ====================================================================== */
+      function updateAmbientLight() {
+        const litCount = candles.filter((c) => c.lit).length;
+        const ratio = litCount / totalCandles;
+        rootEl.style.setProperty('--light-intensity', ratio.toFixed(3));
+      }
+
+      /* ======================================================================
+         Stage Navigation
+         ====================================================================== */
+      function setStage(nextStage) {
+        currentStage = nextStage;
+
+        stageOpening.classList.toggle('is-active', nextStage === 'opening');
+        stageOpening.classList.toggle('is-hidden', nextStage !== 'opening');
+
+        stageCake.classList.toggle('is-active', nextStage === 'cake');
+        stageCake.classList.toggle('is-hidden', nextStage !== 'cake');
+
+        stageReveal.classList.toggle('is-active', nextStage === 'reveal');
+        stageReveal.classList.toggle('is-hidden', nextStage !== 'reveal');
+      }
+
+      /* ======================================================================
+         Smoke Wisp Generator
+         ====================================================================== */
+      function spawnSmoke(smokeOrigin) {
+        if (!smokeOrigin) return;
+
+        // Spawn 4 staggered delicate translucent wisps curling upward
+        const puffCount = 4;
+        for (let i = 0; i < puffCount; i++) {
+          setTimeout(() => {
+            const wisp = document.createElement('span');
+            wisp.className = 'smoke-wisp';
+
+            const dir = Math.random() > 0.5 ? 1 : -1;
+            const driftMid = (5 + Math.random() * 9) * dir;
+            const driftEnd = (8 + Math.random() * 14) * -dir;
+            const driftFinal = (4 + Math.random() * 12) * dir;
+            const duration = 2.0 + Math.random() * 0.9;
+
+            wisp.style.setProperty('--drift-mid', `${driftMid.toFixed(1)}px`);
+            wisp.style.setProperty('--drift-end', `${driftEnd.toFixed(1)}px`);
+            wisp.style.setProperty('--drift-final', `${driftFinal.toFixed(1)}px`);
+            wisp.style.setProperty('--smoke-dur', `${duration.toFixed(2)}s`);
+
+            smokeOrigin.appendChild(wisp);
+
+            // Clean up DOM element after animation completes
+            setTimeout(() => {
+              if (wisp.parentNode) {
+                wisp.parentNode.removeChild(wisp);
+              }
+            }, duration * 1000 + 120);
+          }, i * 165);
+        }
+      }
+
+      /* ======================================================================
+         Extinguish & Relight Logic
+         ====================================================================== */
+      function extinguishCandle(index) {
+        const candle = candles[index];
+        if (!candle || !candle.lit || currentStage !== 'cake') return;
+
+        candle.lit = false;
+        candle.blowProgress = 0;
+        candle.el.classList.add('is-out', 'just-extinguished');
+        candle.el.classList.remove('is-lighting');
+        candle.el.setAttribute('aria-label', `Candle ${index + 1}, extinguished`);
+
+        // Reset inline flame transform cleanly
+        candle.flameWrapper.style.transform = '';
+
+        // Trigger delicate rising smoke
+        spawnSmoke(candle.smokeOrigin);
+
+        // Smoothly dim the room's warm candlelight
+        updateAmbientLight();
+
+        // Remove temporary glowing wick ember class after fade
+        setTimeout(() => {
+          candle.el.classList.remove('just-extinguished');
+        }, 1500);
+
+        // Check if all candles are now out
+        const anyLit = candles.some((c) => c.lit);
+        if (!anyLit) {
+          onAllCandlesOut();
+        }
+      }
+
+      function onAllCandlesOut() {
+        // Softly hide helper & breath bar as the last smoke rises
+        helperText.style.opacity = '0';
+        breathBarWrap.classList.remove('is-visible');
+
+        // Brief atmospheric pause (~700ms) before launching confetti & reveal
+        clearTimeout(revealTimeout);
+        revealTimeout = setTimeout(() => {
+          launchConfettiBurst();
+          setStage('reveal');
+        }, 720);
+      }
+
+      function relightAllCandles() {
+        clearTimeout(revealTimeout);
+        smoothedBlow = 0;
+        breathBarFill.style.transform = 'scaleX(0)';
+
+        candles.forEach((candle, idx) => {
+          candle.lit = true;
+          candle.blowProgress = 0;
+          candle.threshold = 0.72 + (idx === 2 ? 0.24 : Math.abs(idx - 2) * 0.08) + Math.random() * 0.14;
+          candle.el.classList.remove('is-out', 'just-extinguished');
+          candle.el.classList.add('is-lighting');
+          candle.el.setAttribute('aria-label', `Candle ${idx + 1}, lit`);
+          candle.flameWrapper.style.transform = '';
+
+          // Remove lighting animation class after ignition completes
+          setTimeout(() => {
+            candle.el.classList.remove('is-lighting');
+          }, 600);
+        });
+
+        helperText.style.opacity = '1';
+        if (micActive) {
+          breathBarWrap.classList.add('is-visible');
+        }
+
+        updateAmbientLight();
+      }
+
+      /* ======================================================================
+         Web Audio API Microphone Setup & Blow Detection
+         ====================================================================== */
+      async function initMicrophone() {
+        try {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setFallbackHelper();
+            return;
+          }
+
+          // Unlock AudioContext directly inside user tap handler
+          if (!audioContext) {
+            audioContext = new AudioCtx();
+          }
+          if (audioContext.state === 'suspended') {
+            await audioContext.resume();
+          }
+
+          // Request microphone without aggressive noise suppression so blowing wind is captured clearly
+          micStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: false,
+              noiseSuppression: false,
+              autoGainControl: false
+            },
+            video: false
+          });
+
+          const source = audioContext.createMediaStreamSource(micStream);
+          analyser = audioContext.createAnalyser();
+          analyser.fftSize = 512;
+          analyser.smoothingTimeConstant = 0.65;
+          source.connect(analyser);
+
+          timeDataArray = new Uint8Array(analyser.fftSize);
+          freqDataArray = new Uint8Array(analyser.frequencyBinCount);
+
+          micActive = true;
+          helperText.textContent = 'Blow into your mic — or tap the candles';
+          breathBarWrap.classList.add('is-visible');
+
+          startAudioLoop();
+        } catch (err) {
+          // Seamless fallback if permission denied or unavailable in browser WebView
+          micActive = false;
+          setFallbackHelper();
+        }
+      }
+
+      function setFallbackHelper() {
+        helperText.textContent = 'Tap or swipe across the candles';
+        breathBarWrap.classList.remove('is-visible');
+      }
+
+      function startAudioLoop() {
+        if (rafAudioId) cancelAnimationFrame(rafAudioId);
+
+        let lastTime = performance.now();
+
+        function monitorMic(now) {
+          rafAudioId = requestAnimationFrame(monitorMic);
+
+          const dt = Math.min((now - lastTime) / 1000, 0.05);
+          lastTime = now;
+
+          if (!micActive || !analyser || currentStage !== 'cake') {
+            return;
+          }
+
+          analyser.getByteTimeDomainData(timeDataArray);
+          analyser.getByteFrequencyData(freqDataArray);
+
+          // 1. Compute RMS volume from time-domain waveform
+          let sumSq = 0;
+          for (let i = 0; i < timeDataArray.length; i++) {
+            const normalized = (timeDataArray[i] - 128) / 128;
+            sumSq += normalized * normalized;
+          }
+          const rms = Math.sqrt(sumSq / timeDataArray.length);
+
+          // 2. Compute broadband wind/breath energy (low-to-mid frequency bins)
+          let lowMidSum = 0;
+          const lowMidBins = Math.min(64, freqDataArray.length);
+          for (let i = 2; i < lowMidBins; i++) {
+            lowMidSum += freqDataArray[i];
+          }
+          const avgFreq = lowMidSum / ((lowMidBins - 2) * 255);
+
+          // Combine RMS & broadband frequency energy; filter out quiet room noise floor
+          const combined = rms * 1.45 + avgFreq * 0.55;
+          const noiseFloor = 0.085;
+          const rawIntensity = Math.max(0, Math.min(1, (combined - noiseFloor) / 0.28));
+
+          // Smooth response for natural flame physics
+          const attack = rawIntensity > smoothedBlow ? 0.35 : 0.14;
+          smoothedBlow += (rawIntensity - smoothedBlow) * attack;
+
+          // Update subtle breath feedback bar
+          breathBarFill.style.transform = `scaleX(${Math.min(1, smoothedBlow * 1.2).toFixed(3)})`;
+
+          // Apply live wind deformation to lit flames & accumulate blow progress
+          candles.forEach((candle, idx) => {
+            if (!candle.lit) return;
+
+            if (smoothedBlow > 0.04) {
+              // Flames tilt, flicker intensely, and shrink under breath
+              const jitter = (Math.random() - 0.5) * 14 * smoothedBlow;
+              const tiltDeg = (18 + idx * 2.5) * smoothedBlow + jitter;
+              const scaleY = Math.max(0.42, 1 - smoothedBlow * 0.48 + (Math.random() - 0.5) * 0.12);
+              const scaleX = 1 + smoothedBlow * 0.16;
+
+              candle.flameWrapper.style.transform = `rotate(${tiltDeg.toFixed(1)}deg) scale(${scaleX.toFixed(2)}, ${scaleY.toFixed(2)})`;
+
+              // Accumulate blow energy when blowing above active threshold
+              if (smoothedBlow > 0.24) {
+                const power = (smoothedBlow - 0.2) * 2.35;
+                candle.blowProgress += power * dt;
+
+                if (candle.blowProgress >= candle.threshold) {
+                  extinguishCandle(idx);
+                }
+              }
+            } else {
+              // Recover smoothly when breath stops
+              candle.flameWrapper.style.transform = '';
+              candle.blowProgress = Math.max(0, candle.blowProgress - dt * 0.85);
+            }
+          });
+        }
+
+        rafAudioId = requestAnimationFrame(monitorMic);
+      }
+
+      /* ======================================================================
+         Touch, Click & Swipe Interaction for Candles
+         ====================================================================== */
+      function checkPointOverCandle(clientX, clientY) {
+        if (currentStage !== 'cake') return;
+        const target = document.elementFromPoint(clientX, clientY);
+        if (!target) return;
+
+        const candleEl = target.closest('.candle-unit');
+        if (candleEl) {
+          const idx = Number(candleEl.dataset.index);
+          if (!Number.isNaN(idx)) {
+            extinguishCandle(idx);
+          }
+        }
+      }
+
+      // Tap / Click individual candles + keyboard accessibility
+      candleEls.forEach((el, idx) => {
+        el.addEventListener('click', () => {
+          extinguishCandle(idx);
+        });
+
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            extinguishCandle(idx);
+          }
+        });
+      });
+
+      // Swipe / Drag across candles (Mouse + Touch via Pointer Events)
+      cakeScene.addEventListener('pointerdown', (e) => {
+        if (currentStage !== 'cake') return;
+        isSwiping = true;
+        checkPointOverCandle(e.clientX, e.clientY);
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!isSwiping || currentStage !== 'cake') return;
+        checkPointOverCandle(e.clientX, e.clientY);
+      });
+
+      window.addEventListener('pointerup', () => {
+        isSwiping = false;
+      });
+
+      window.addEventListener('pointercancel', () => {
+        isSwiping = false;
+      });
+
+      // Touchmove fallback for older iOS / Instagram WebViews
+      cakeScene.addEventListener(
+        'touchmove',
+        (e) => {
+          if (currentStage !== 'cake' || !e.touches.length) return;
+          const touch = e.touches[0];
+          checkPointOverCandle(touch.clientX, touch.clientY);
+        },
+        { passive: true }
+      );
+
+      /* ======================================================================
+         Tasteful Warm-Toned Confetti & Golden Sparkle Canvas
+         ====================================================================== */
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      let confettiParticles = [];
+      let confettiAnimId = null;
+
+      function resizeCanvas() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.floor(window.innerWidth * dpr);
+        canvas.height = Math.floor(window.innerHeight * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      const WARM_PALETTE = [
+        '#f6d28b', // Champagne gold
+        '#e8a85c', // Warm amber
+        '#f5efe6', // Soft ivory cream
+        '#d48a54', // Muted bronze
+        '#c9966b', // Rose bronze
+        '#ffe6b3'  // Soft candlelight highlight
+      ];
+
+      function launchConfettiBurst() {
+        resizeCanvas();
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const originX = w * 0.5;
+        const originY = h * 0.46;
+
+        confettiParticles = [];
+
+        // 70 delicate warm ribbons & golden sparkles
+        for (let i = 0; i < 72; i++) {
+          const isSparkle = i % 3 === 0;
+          const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.9;
+          const speed = (isSparkle ? 3.2 : 4.2) + Math.random() * 5.8;
+
+          confettiParticles.push({
+            x: originX + (Math.random() - 0.5) * 60,
+            y: originY + (Math.random() - 0.5) * 24,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 1.6,
+            gravity: isSparkle ? 0.055 : 0.085,
+            drag: isSparkle ? 0.985 : 0.982,
+            size: isSparkle ? 2 + Math.random() * 2.4 : 4 + Math.random() * 4.5,
+            aspect: 0.45 + Math.random() * 0.4,
+            rotation: Math.random() * Math.PI * 2,
+            rotationSpeed: (Math.random() - 0.5) * 0.14,
+            wobble: Math.random() * Math.PI * 2,
+            wobbleSpeed: 0.06 + Math.random() * 0.06,
+            color: WARM_PALETTE[Math.floor(Math.random() * WARM_PALETTE.length)],
+            isSparkle,
+            alpha: 1,
+            decay: 0.0045 + Math.random() * 0.0045
+          });
+        }
+
+        if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+        animateConfetti();
+      }
+
+      function animateConfetti() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        ctx.clearRect(0, 0, w, h);
+
+        let aliveCount = 0;
+
+        for (let i = 0; i < confettiParticles.length; i++) {
+          const p = confettiParticles[i];
+          if (p.alpha <= 0.01) continue;
+
+          aliveCount++;
+          p.vx *= p.drag;
+          p.vy = p.vy * p.drag + p.gravity;
+          p.wobble += p.wobbleSpeed;
+          p.x += p.vx + Math.sin(p.wobble) * 0.45;
+          p.y += p.vy;
+          p.rotation += p.rotationSpeed;
+          p.alpha = Math.max(0, p.alpha - p.decay);
+
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.translate(p.x, p.y);
+
+          if (p.isSparkle) {
+            // Soft glowing golden dust sparkle
+            ctx.fillStyle = p.color;
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.arc(0, 0, p.size * 0.65, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            // Delicate tumbling warm ribbon
+            ctx.rotate(p.rotation);
+            const flipScale = Math.cos(p.wobble * 1.4);
+            ctx.scale(1, flipScale);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, (-p.size * p.aspect) / 2, p.size, p.size * p.aspect);
+          }
+
+          ctx.restore();
+        }
+
+        if (aliveCount > 0) {
+          confettiAnimId = requestAnimationFrame(animateConfetti);
+        } else {
+          ctx.clearRect(0, 0, w, h);
+          confettiAnimId = null;
+        }
+      }
+
+      /* ======================================================================
+         Button Handlers & Initialization
+         ====================================================================== */
+      btnStart.addEventListener('click', () => {
+        // Transition immediately for snappy mobile feel while requesting mic access
+        relightAllCandles();
+        setStage('cake');
+        initMicrophone();
+      });
+
+      btnReplay.addEventListener('click', () => {
+        relightAllCandles();
+        setStage('cake');
+      });
+
+      window.addEventListener('resize', resizeCanvas);
+
+      window.onload = function () {
+        resizeCanvas();
+        // Start with gentle low candlelight on the opening screen
+        rootEl.style.setProperty('--light-intensity', '0.18');
+      };
+    })();
+  </script>
+</body>
+</html>
